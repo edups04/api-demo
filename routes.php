@@ -1,13 +1,16 @@
 <?php
 
 //import get and post files
+require_once "./config/database.php";
 require_once "./modules/Get.php";
 require_once "./modules/Post.php";
 
+$db = new Connection();
+$pdo = $db->connect();
 
 //instantiate post, get class
-$post = new Post();
-$get = new Get();
+$post = new Post($pdo);
+$get = new Get($pdo);
 
 
 
@@ -43,6 +46,15 @@ switch($_SERVER['REQUEST_METHOD']){
 
             case "quests":
                 echo $get->getQuests();
+            break;
+
+            case "chefs":
+                if(count($request) > 1){
+                    echo json_encode($get->getChefs($request[1]));
+                }
+                else{
+                    echo json_encode($get->getChefs());
+                }
             break;
 
             default:

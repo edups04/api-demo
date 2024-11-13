@@ -1,5 +1,12 @@
 <?php
 class Post{
+
+    protected $pdo;
+
+    public function __construct(\PDO $pdo){
+        $this->pdo = $pdo;
+    }
+
     public function postStudents(){
         //code for retrieving data on DB
         return "This is some student records added.";
