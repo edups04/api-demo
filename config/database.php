@@ -2,7 +2,7 @@
     //meta data
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: application/json; charset=utf-8");
-    header("Access-Control-Allow-Methods: POST, GET");
+    header("Access-Control-Allow-Methods: POST, GET, PATCH");
     header("Access-Control-Max-Age: 3600");
     // header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers");
     date_default_timezone_set("Asia/Manila");
@@ -11,6 +11,8 @@
     define("DBASE", "chefhub_db"); //enter your own databasename
     define("USER", "root");
     define("PWORD", "");
+
+  
 
     class Connection {
         protected $connectionString = "mysql:host=" . SERVER . ";dbname=" .DBASE. ";charset=utf8";

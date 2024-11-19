@@ -1,5 +1,5 @@
 <?php
-class Post{
+class Patch{
 
     protected $pdo;
 
@@ -7,23 +7,8 @@ class Post{
         $this->pdo = $pdo;
     }
 
-    public function postStudents(){
-        //code for retrieving data on DB
-        return "This is some student records added.";
-    }
 
-    public function postClasses(){
-        //code for retrieving data on DB
-        return "This is some classes records added.";
-    }
-
-    public function postFaculty(){
-        //code for retrieving data on DB
-        return "This is some faculty records added.";
-    }
-
-
-    public function postChefs($body){
+    public function patchChefs($body, $id){
         $values = [];
         $errmsg = "";
         $code = 0;
@@ -32,9 +17,11 @@ class Post{
         foreach($body as $value){
             array_push($values, $value);
         }
+
+        array_push($values, $id);
         
         try{
-            $sqlString = "INSERT INTO chefs_tbl(fname, lname, position, isdeleted) VALUES (?,?,?,?)";
+            $sqlString = "UPDATE chefs_tbl SET fname=?, lname=? WHERE id = ?";
             $sql = $this->pdo->prepare($sqlString);
             $sql->execute($values);
 
@@ -53,20 +40,15 @@ class Post{
 
     }
 
-    public function postMenu($body){
-        $values = [];
+    public function archiveChefs($id){
+        
         $errmsg = "";
         $code = 0;
-
-
-        foreach($body as $value){
-            array_push($values, $value);
-        }
         
         try{
-            $sqlString = "INSERT INTO chefs_tbl(fname, lname, position, isdeleted) VALUES (?,?,?,?)";
+            $sqlString = "UPDATE chefs_tbl SET isdeleted=1 WHERE id = ?";
             $sql = $this->pdo->prepare($sqlString);
-            $sql->execute($values);
+            $sql->execute([$id]);
 
             $code = 200;
             $data = null;
@@ -82,6 +64,9 @@ class Post{
         return array("errmsg"=>$errmsg, "code"=>$code);
 
     }
+
+
+    
 }
 
 ?>

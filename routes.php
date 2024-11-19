@@ -4,13 +4,18 @@
 require_once "./config/database.php";
 require_once "./modules/Get.php";
 require_once "./modules/Post.php";
+require_once "./modules/Patch.php";
+require_once "./modules/Delete.php";
+
 
 $db = new Connection();
 $pdo = $db->connect();
 
 //instantiate post, get class
 $post = new Post($pdo);
+$patch = new Patch($pdo);
 $get = new Get($pdo);
+$delete = new Delete($pdo);
 
 
 
@@ -66,6 +71,7 @@ switch($_SERVER['REQUEST_METHOD']){
     break;
 
     case "POST":
+        $body = json_decode(file_get_contents("php://input"));
         switch($request[0]){
             case "students":
                 echo $post->postStudents();
@@ -84,6 +90,9 @@ switch($_SERVER['REQUEST_METHOD']){
                 echo "This is my post quests route.";
             break;
 
+            case "chefs":
+                echo json_encode($post->postChefs($body));
+                break;
             default:
                 http_response_code(401);
                 echo "This is invalid endpoint";
@@ -91,6 +100,26 @@ switch($_SERVER['REQUEST_METHOD']){
         }
     break;
 
+    case "PATCH":
+        $body = json_decode(file_get_contents("php://input"));
+
+        switch($request[0]){
+            case "chefs":
+                echo json_encode($patch->patchChefs($body, $request[1]));
+            break;
+
+        }
+        break;
+        case "DELETE":
+            switch($request[0]){
+                case "chefs":
+                    echo json_encode($patch->archiveChefs($request[1]));
+                    break;
+                }
+                case "destroychefs":
+                    echo json_encode($delete->deleteChefs($request[1]));
+                    break;
+        break;
     default:
         http_response_code(400);
         echo "Invalid Request Method.";

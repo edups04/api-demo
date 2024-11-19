@@ -29,9 +29,9 @@ class Get{
     }
 
     public function getChefs($id = null){
-        $sqlString = "SELECT * FROM chefs_tbl";
+        $sqlString = "SELECT * FROM chefs_tbl WHERE isdeleted=0";
         if($id != null){
-            $sqlString .= " WHERE id=" . $id; 
+            $sqlString .= " AND id=" . $id; 
         }
 
 
