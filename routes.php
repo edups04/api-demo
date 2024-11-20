@@ -6,6 +6,7 @@ require_once "./modules/Get.php";
 require_once "./modules/Post.php";
 require_once "./modules/Patch.php";
 require_once "./modules/Delete.php";
+require_once "./modules/Auth.php";
 
 
 $db = new Connection();
@@ -16,6 +17,7 @@ $post = new Post($pdo);
 $patch = new Patch($pdo);
 $get = new Get($pdo);
 $delete = new Delete($pdo);
+$auth = new Authentication($pdo);
 
 
 
@@ -73,6 +75,13 @@ switch($_SERVER['REQUEST_METHOD']){
     case "POST":
         $body = json_decode(file_get_contents("php://input"));
         switch($request[0]){
+            case "login":
+                echo json_encode($auth->login($body));
+                break;
+            case "user":
+                echo json_encode($auth->addAccount($body));
+            break;
+
             case "students":
                 echo $post->postStudents();
             break;
