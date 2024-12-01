@@ -1,66 +1,66 @@
 <?php
-class Get{
+include_once "Common.php";
+
+class Get extends Common{
 
     protected $pdo;
 
     public function __construct(\PDO $pdo){
         $this->pdo = $pdo;
     }
-
-
-    public function getStudents(){
-        //code for retrieving data on DB
-        return "This is some student records retrieved from db";
-    }
-
-    public function getClasses(){
-        //code for retrieving data on DB
-        return "This is some classes records retrieved from db";
-    }
-
-    public function getFaculty(){
-        //code for retrieving data on DB
-        return "This is some Faculty records retrieved from db";
-    }
-
-    public function getQuests(){
-        //code for retrieving data on DB
-        return "This is some Quests records retrieved from db";
-    }
-
-    public function getChefs($id = null){
-        $sqlString = "SELECT * FROM chefs_tbl WHERE isdeleted=0";
-        if($id != null){
-            $sqlString .= " AND id=" . $id; 
-        }
-
-
-        $data = array();
-        $errmsg = "";
-        $code = 0;
+    
+    public function getLogs($date){
+        $filename = "./logs/" . $date . ".log";
+        
+        // $file = file_get_contents("./logs/$filename");
+        // $logs = explode(PHP_EOL, $file);
 
         
+        $logs = array();
         try{
-            if($result = $this->pdo->query($sqlString)->fetchAll()){
-                foreach($result as $record){
-                    array_push($data, $record);
-                }
-                $result = null;
-                $code = 200;
-                return array("code"=>$code, "data"=>$data); 
+            $file = new SplFileObject($filename);
+            while(!$file->eof()){
+                array_push($logs, $file->fgets());
             }
-            else{
-                $errmsg = "No data found";
-                $code = 404;
-            }
+            $remarks = "success";
+            $message = "Successfully retrieved logs.";
         }
-        catch(\PDOException $e){
-            $errmsg = $e->getMessage();
-            $code = 403;
+        catch(Exception $e){
+            $remarks = "failed";
+            $message = $e->getMessage();
+        }
+        
+
+        return $this->generateResponse(array("logs"=>$logs), $remarks, $message, 200);
+    }
+
+
+    public function getChefs($id){
+        
+        $condition = "isdeleted = 0";
+        if($id != null){
+            $condition .= " AND id=" . $id; 
         }
 
-        return array("code"=>$code, "errmsg"=>$errmsg);
+        $result = $this->getDataByTable('chefs_tbl', $condition, $this->pdo);
+        if($result['code'] == 200){
+            return $this->generateResponse($result['data'], "success", "Successfully retrieved records.", $result['code']);
+        }
+        return $this->generateResponse(null, "failed", $result['errmsg'], $result['code']);
+    }
+    
+    public function getMenu($id){
+        $condition = "isdeleted = 0";
+        if($id != null){
+            $condition .= " AND id=" . $id; 
+        }
+
+        $result = $this->getDataByTable('menu_tbl', $condition, $this->pdo);
+
+        if($result['code'] == 200){
+            return $this->generateResponse($result['data'], "success", "Successfully retrieved records.", $result['code']);
+        }
+        return $this->generateResponse(null, "failed", $result['errmsg'], $result['code']);
     }
 }
-
 ?>

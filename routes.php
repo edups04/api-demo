@@ -40,31 +40,18 @@ switch($_SERVER['REQUEST_METHOD']){
         if($auth->isAuthorized()){
             switch($request[0]){
     
-                case "students":
-                    echo $get->getStudents();
-                break;
-    
-                case "classes":
-                    echo $get->getClasses();
-                break;
-    
-                case "faculty":
-                    echo "This is my get faculty route.";
-                break;
-    
-                case "quests":
-                    echo $get->getQuests();
-                break;
-    
                 case "chefs":
-                    if(count($request) > 1){
-                        echo json_encode($get->getChefs($request[1]));
-                    }
-                    else{
-                        echo json_encode($get->getChefs());
-                    }
+                    echo json_encode($get->getChefs($request[1] ?? null));
                 break;
-    
+     
+                case "menu":
+                    echo json_encode($get->getMenu($request[1] ?? null));
+                break;
+
+                case "log":
+                    echo json_encode($get->getLogs($request[1] ?? date("Y-m-d")));
+                break;
+
                 default:
                     http_response_code(401);
                     echo "This is invalid endpoint";
@@ -79,7 +66,7 @@ switch($_SERVER['REQUEST_METHOD']){
     break;
 
     case "POST":
-        $body = json_decode(file_get_contents("php://input"));
+        $body = json_decode(file_get_contents("php://input"), true);
         switch($request[0]){
             case "login":
                 echo json_encode($auth->login($body));
@@ -110,6 +97,12 @@ switch($_SERVER['REQUEST_METHOD']){
             case "chefs":
                 echo json_encode($post->postChefs($body));
                 break;
+
+            case "menu":
+                echo json_encode($post->postMenu($body));
+            break;
+
+
             default:
                 http_response_code(401);
                 echo "This is invalid endpoint";

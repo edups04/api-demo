@@ -1,5 +1,8 @@
 <?php
-class Post{
+
+include_once "Common.php";
+
+class Post extends Common{
 
     protected $pdo;
 
@@ -24,63 +27,22 @@ class Post{
 
 
     public function postChefs($body){
-        $values = [];
-        $errmsg = "";
-        $code = 0;
-
-
-        foreach($body as $value){
-            array_push($values, $value);
-        }
-        
-        try{
-            $sqlString = "INSERT INTO chefs_tbl(fname, lname, position, isdeleted) VALUES (?,?,?,?)";
-            $sql = $this->pdo->prepare($sqlString);
-            $sql->execute($values);
-
-            $code = 200;
-            $data = null;
-
-            return array("data"=>$data, "code"=>$code);
-        }
-        catch(\PDOException $e){
-            $errmsg = $e->getMessage();
-            $code = 400;
-        }
-
-        
-        return array("errmsg"=>$errmsg, "code"=>$code);
-
+      $result = $this->postData("chefs_tbl", $body, $this->pdo);
+      if($result['code'] == 200){
+        $this->logger("testthunder5", "POST", "Created a new chef record");
+        return $this->generateResponse($result['data'], "success", "Successfully created a new record.", $result['code']);
+      }
+      $this->logger("testthunder5", "POST", $result['errmsg']);
+      return $this->generateResponse(null, "failed", $result['errmsg'], $result['code']);
     }
 
     public function postMenu($body){
-        $values = [];
-        $errmsg = "";
-        $code = 0;
-
-
-        foreach($body as $value){
-            array_push($values, $value);
-        }
-        
-        try{
-            $sqlString = "INSERT INTO chefs_tbl(fname, lname, position, isdeleted) VALUES (?,?,?,?)";
-            $sql = $this->pdo->prepare($sqlString);
-            $sql->execute($values);
-
-            $code = 200;
-            $data = null;
-
-            return array("data"=>$data, "code"=>$code);
-        }
-        catch(\PDOException $e){
-            $errmsg = $e->getMessage();
-            $code = 400;
-        }
-
-        
-        return array("errmsg"=>$errmsg, "code"=>$code);
-
+       $result = $this->postData("menu_tbl", $body, $this->pdo);
+       if($result['code'] == 200){
+        $this->logger("testthunder5", "POST", "Created a new menu record");
+        return $this->generateResponse($result['data'], "success", "Successfully created a new record.", $result['code']);
+      }
+      return $this->generateResponse(null, "failed", $result['errmsg'], $result['code']);
     }
 }
 
