@@ -20,6 +20,8 @@
     define("USER", "root");
     define("PWORD", "");
     define("TOKEN_KEY", "12E1561FB866FE9D966538F2125A5");
+    
+    define("SECRET_KEY", "Your_secret_key");
 
   
 

@@ -7,6 +7,7 @@ require_once "./modules/Post.php";
 require_once "./modules/Patch.php";
 require_once "./modules/Delete.php";
 require_once "./modules/Auth.php";
+require_once "./modules/Crypt.php";
 
 
 $db = new Connection();
@@ -18,7 +19,7 @@ $patch = new Patch($pdo);
 $get = new Get($pdo);
 $delete = new Delete($pdo);
 $auth = new Authentication($pdo);
-
+$crypt = new Crypt();
 
 
 //retrieved and endpoints and split
@@ -41,17 +42,20 @@ switch($_SERVER['REQUEST_METHOD']){
             switch($request[0]){
     
                 case "chefs":
-                    echo json_encode($get->getChefs($request[1] ?? null));
+                    $dataString = json_encode($get->getChefs($request[1] ?? null));
+                    echo $crypt->encryptData($dataString);
                 break;
      
                 case "menu":
-                    echo json_encode($get->getMenu($request[1] ?? null));
+                    $dataString = json_encode($get->getMenu($request[1] ?? null));
+                    echo $crypt->encryptData($dataString);
                 break;
 
                 case "log":
                     echo json_encode($get->getLogs($request[1] ?? date("Y-m-d")));
                 break;
 
+             
                 default:
                     http_response_code(401);
                     echo "This is invalid endpoint";
@@ -95,6 +99,8 @@ switch($_SERVER['REQUEST_METHOD']){
             break;
 
             case "chefs":
+                // echo json_encode($body);
+                // echo $crypt->decryptData($body);
                 echo json_encode($post->postChefs($body));
                 break;
 
@@ -137,5 +143,6 @@ switch($_SERVER['REQUEST_METHOD']){
 }
 
 
-
+$pdo = null;
+// unset($pdo);
 ?>
